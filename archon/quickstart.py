@@ -1,4 +1,5 @@
 from archon import Archon
+import gradio as gr
 
 # make sure to set your OPENAI_API_KEY environment variable
 
@@ -63,11 +64,33 @@ archon_gpt_config = {
 single_gpt = Archon(single_gpt_config)
 archon_gpt = Archon(archon_gpt_config)
 
-testing_instruction = [{"role": "user", "content": "How do I make a cake?"}]
+def generate_responses(user_input):
+    instruction = [{"role": "user", "content": user_input}]
+    
+    single_gpt_response = single_gpt.generate(instruction)
+    archon_gpt_response = archon_gpt.generate(instruction)
+    
+    # Print responses to terminal
+    print(f"Single GPT ({single_gpt.config['name']}) Query: {user_input}")
+    print(f"Single GPT Response: {single_gpt_response}")
+    print("---------------------")
+    print(f"Archon GPT ({archon_gpt.config['name']}) Query: {user_input}")
+    print(f"Archon GPT Response: {archon_gpt_response}")
+    print("=====================")
+    
+    return f"Single GPT: {single_gpt_response}", f"Archon GPT: {archon_gpt_response}"
 
-single_gpt_response = single_gpt.generate(testing_instruction)
-archon_gpt_response = archon_gpt.generate(testing_instruction)
+# Create Gradio interface
+iface = gr.Interface(
+    fn=generate_responses,
+    inputs=gr.Textbox(lines=2, placeholder="Enter your prompt here..."),
+    outputs=[
+        gr.Textbox(label="Single GPT Response"),
+        gr.Textbox(label="Archon GPT Response")
+    ],
+    title="Archon GPT Comparison",
+    description="Compare responses from Single GPT and Archon GPT"
+)
 
-print(f"Single GPT Query: {single_gpt_response}")
-print("---------------------")
-print(f"Archon GPT: {archon_gpt_response}")
+# Launch the interface
+iface.launch()
