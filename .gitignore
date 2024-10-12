@@ -169,3 +169,5 @@ cython_debug/
 archon/arena_hard_auto/api_config.yaml
 archon/api_keys.json
 archon/arena_hard_auto/api_config.yaml
+
+api_keys.json
